@@ -62,7 +62,9 @@ class ProfilerController extends Controller
 
     /**
      * @param Request $request
-     * @return Response 
+     * @param $run
+     * @param $function
+     * @return Response
      */
     public function functionAction(Request $request, $run, $function)
     {
@@ -82,7 +84,7 @@ class ProfilerController extends Controller
 
         $report = $xhprof->getReport($params);
 
-        return $this->renderView('ClamidityProfilerBundle:Collector:function.html.twig', array(
+        return $this->render('ClamidityProfilerBundle:Collector:function.html.twig', array(
             'url'      => $request->server->get('REQUEST_URI'),
             'params'   => $params,
             'report'   => $report,
