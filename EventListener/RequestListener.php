@@ -2,6 +2,7 @@
 
 namespace Clamidity\ProfilerBundle\EventListener;
 
+use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
@@ -30,19 +31,19 @@ class RequestListener
 
     public function onCoreRequest(GetResponseEvent $event)
     {
-        if ($this->checkUri($event)) {
+        if ($this->checkUri($event) && $this->collector->isEnabled()) {
             $this->collector->startProfiling();
         }
     }
 
     public function onCoreResponse(FilterResponseEvent $event)
     {
-        if ($this->checkUri($event)) {
+        if ($this->checkUri($event) && $this->collector->isEnabled()) {
             $this->collector->stopProfiling();
         }
     }
 
-    protected function checkUri($event)
+    protected function checkUri(KernelEvent $event)
     {
         $uri = $event->getRequest()->server->get('PHP_SELF');
 

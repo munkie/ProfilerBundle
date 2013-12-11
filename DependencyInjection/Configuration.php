@@ -3,6 +3,7 @@
 namespace Clamidity\ProfilerBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\NodeInterface;
 
 /**
  * This class contains the configuration information for the bundle
@@ -17,7 +18,7 @@ class Configuration
     /**
      * Generates the configuration tree.
      *
-     * @return \Symfony\Component\DependencyInjection\Configuration\NodeInterface
+     * @return NodeInterface
      */
     public function getConfigTree()
     {

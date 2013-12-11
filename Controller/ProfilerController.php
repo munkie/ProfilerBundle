@@ -2,9 +2,9 @@
 
 namespace Clamidity\ProfilerBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Clamidity\BaseBundle\Controller\BaseController;
 use Clamidity\ProfilerBundle\Model\Xhprof\XHProfReport;
 use Clamidity\ProfilerBundle\Model\Xhprof\XHProfCallGraph;
 
@@ -13,7 +13,7 @@ use Clamidity\ProfilerBundle\Model\Xhprof\XHProfCallGraph;
  *
  * @author Michael Shattuck <ms2474@gmail.com>
  */
-class ProfilerController extends BaseController
+class ProfilerController extends Controller
 {
     /**
      *
@@ -36,23 +36,18 @@ class ProfilerController extends BaseController
     {
         $this->disableProfiler();
 
-        $xhprof        = $this->getXhprof();
-        $parameters    = $_GET;
+        $parameters    = $request->query->all();
         $query         = $this->getQuery($parameters);
         $squery        = $this->getSortedQuery($parameters);
-        $params        = $this->getParameterArray();
-        $params['run'] = $run;
-        $all           = false;
+        $params        = $parameters + array('run' => $run) + $this->getParameterArray();
 
-        foreach ($parameters as $key => $value) {
-            $params[$key] = $value;
-        }
-
-        if (isset($_GET['all']) && $_GET['all'] == 0) {
+        if ($request->query->has('all') && 0 == $request->query->get('all')) {
             $all = true;
+        } else {
+            $all = false;
         }
 
-        $report = $xhprof->getReport($params);
+        $report = $this->getXhprof()->getReport($params);
 
         return $this->render('ClamidityProfilerBundle:Collector:index.html.twig', array(
             'url'    => $request->server->get('REQUEST_URI'),
@@ -66,7 +61,6 @@ class ProfilerController extends BaseController
     }
 
     /**
-     *
      * @param Request $request
      * @return Response 
      */
@@ -88,7 +82,7 @@ class ProfilerController extends BaseController
 
         $report = $xhprof->getReport($params);
 
-        return $this->render('ClamidityProfilerBundle:Collector:function.html.twig', array(
+        return $this->renderView('ClamidityProfilerBundle:Collector:function.html.twig', array(
             'url'      => $request->server->get('REQUEST_URI'),
             'params'   => $params,
             'report'   => $report,
@@ -99,28 +93,19 @@ class ProfilerController extends BaseController
         ));
     }
 
-    public function callgraphAction()
+    public function callgraphAction(Request $request, $run)
     {
         ini_set('max_execution_time', 100);
 
         $xhprof     = $this->getCallGraph();
-        $parameters = $_GET;
-        $params     = $this->getCallGraphArray();
+        $params     = array('run' => $run) + $request->query->all() + $this->getCallGraphArray();
 
-        foreach ($parameters as $key => $value) {
-            $params[$key] = $value;
-        }
 
         if ($params['threshold'] < 0) {
             $params['threshold'] = 0;
-        }
-        else if ($params['threshold'] > 1) {
+        } elseif ($params['threshold'] > 1) {
             $params['threshold'] = 1;
         }
-
-//        if (!array_key_exists($type, $xhprof_legal_image_types)) {
-//            $type = $paramsRaw['type'][1]; // default image type.
-//        }
 
         if (!empty($params['run'])) {
             $content = $xhprof->xhprof_render_image($params);
@@ -129,8 +114,7 @@ class ProfilerController extends BaseController
             $content = $xhprof->xhprof_render_diff_image($params);
         }
 
-        echo $content;
-        die;
+        return new Response($content, 200, array('Content-Type' => 'image/png'));
     }
 
     /**
@@ -173,17 +157,19 @@ class ProfilerController extends BaseController
      */
     protected function disableProfiler()
     {
-        $this->get('profiler')->disable();
+        if ($this->has('profiler')) {
+            $this->get('profiler')->disable();
+        }
     }
 
     /**
      *
-     * @return XHProf
+     * @return XHProfReport
      */
     protected function getXhprof()
     {
         if (!isset($this->xhprof)) {
-            $this->xhprof = new XHProfReport($this->getParameter('clamidity_profiler.location_reports'));
+            $this->xhprof = new XHProfReport($this->container->getParameter('clamidity_profiler.location_reports'));
         }
 
         return $this->xhprof;
@@ -196,46 +182,31 @@ class ProfilerController extends BaseController
     protected function getCallGraph()
     {
         if (!isset($this->callgraph)) {
-            $this->callgraph = new XHProfCallGraph($this->getParameter('clamidity_profiler.location_reports'));
+            $this->callgraph = new XHProfCallGraph($this->container->getParameter('clamidity_profiler.location_reports'));
         }
 
         return $this->callgraph;
     }
 
-    protected function getQuery($params)
+    /**
+     * @param array $params
+     * @return string
+     */
+    protected function getQuery(array $params)
     {
-        $query = '?';
-
-        $i = 1;
-        foreach ($params as $key => $param) {
-            
-            if ($i === 1) {
-                $query .= $key."=".$param;
-            }
-            else {
-                $query .= "&".$key."=".$param;
-            }
-
-            $i++;
-        }
-
-        return $query;
+        return '?' . http_build_query($params);
     }
 
-    protected function getSortedQuery($params)
+    /**
+     * @param array $params
+     * @return string
+     */
+    protected function getSortedQuery(array $params)
     {
-        $query = '';
-
-        $i = 1;
-        foreach ($params as $key => $param) {
-            
-            if ($key != 'sort') {
-                $query .= "&".$key."=".$param;
-            }
-
-            $i++;
+        if (isset($params['sort'])) {
+            unset($params['sort']);
         }
 
-        return $query;
+        return http_build_query($params);
     }
 }

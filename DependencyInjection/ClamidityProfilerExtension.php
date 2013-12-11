@@ -12,13 +12,6 @@ use Symfony\Component\Config\FileLocator;
 class ClamidityProfilerExtension extends Extension
 {
     /**
-     * @var array
-     */
-    protected $resources = array(
-        'services' => 'services.yml',
-    );
-    
-    /**
      * Loads the services based on your application configuration.
      *
      * @param array $configs
@@ -30,36 +23,19 @@ class ClamidityProfilerExtension extends Extension
         $configuration = new Configuration();
         $config = $processor->process($configuration->getConfigTree(), $configs);
 
-        if ($config['enabled']) {
-            $this->loadDefaults($container);
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.yml');
             
-            foreach ($config as $key => $value) {
-                $container->setParameter($this->getAlias().'.'.$key, $value);
-            }
+        foreach ($config as $key => $value) {
+            $container->setParameter($this->getAlias(). '.' . $key, $value);
         }
-    }
-
-    public function getAlias()
-    {
-        return 'clamidity_profiler';
     }
 
     /**
-     * Get File Loader
-     *
-     * @param ContainerBuilder $container
+     * @return string
      */
-    public function getFileLoader($container)
+    public function getAlias()
     {
-        return new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-    }
-
-    protected function loadDefaults($container)
-    {
-        $loader = $this->getFileLoader($container);
-
-        foreach ($this->resources as $resource) {
-            $loader->load($resource);
-        }
+        return 'clamidity_profiler';
     }
 }

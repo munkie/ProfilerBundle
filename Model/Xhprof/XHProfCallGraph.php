@@ -26,7 +26,7 @@ use Clamidity\ProfilerBundle\Model\Xhprof\XHProf;
  * Modifications made by:
  * @author Michael Shattuck <ms2474@gmail.com>
  */
-class XHProfCallGraph extends XHProf
+class XHProfCallGraph extends XHProfLib
 {
     public $xhprof_legal_image_types = array(
             "jpg" => 1,
