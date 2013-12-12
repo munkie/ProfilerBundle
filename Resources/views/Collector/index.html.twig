@@ -49,47 +49,45 @@
             <th>
                 <a href="{{ path('clamidity_profiler_profiler_index', {run:run, sort:'wt'}) }}{{ squery }}">
                     Incl. Wall Time<br>
-                    (microsec)
+                    ms
                 </a>
             </th>
             <th>
-                IWall%
+                %
             </th>
             <th>
                 
                 <a href="{{ path('clamidity_profiler_profiler_index', {run:run, sort:'excl_wt'}) }}{{ squery }}">
                     Excl. Wall Time<br>
-                    (microsec)
+                    ms
                 </a>
             </th>
             <th>
-                EWall%
+                %
             </th>
             <th>
-                
                 <a href="{{ path('clamidity_profiler_profiler_index', {run:run, sort:'cpu'}) }}{{ squery }}">
                     Incl. CPU<br>
-                    (microsecs)
+                    ms
                 </a>
             </th>
             <th>
-                ICpu%
+                %
             </th>
             <th>
-                
                 <a href="{{ path('clamidity_profiler_profiler_index', {run:run, sort:'excl_cpu'}) }}{{ squery }}">
                     Excl. CPU<br>
-                    (microsec)
+                    ms
                 </a>
             </th>
             <th>
-                ECPU%
+                %
             </th>
             <th>
                 
                 <a href="{{ path('clamidity_profiler_profiler_index', {run:run, sort:'mu'}) }}{{ squery }}">
                     Incl. MemUse<br>
-                    (bytes)
+                    bytes
                 </a>
             </th>
             <th>
@@ -99,31 +97,31 @@
                 
                 <a href="{{ path('clamidity_profiler_profiler_index', {run:run, sort:'excl_mu'}) }}{{ squery }}">
                     Excl. MemUse<br>
-                    (bytes)
+                    bytes
                 </a>
             </th>
             <th>
-                EMemUse%
+                %
             </th>
             <th>
                 
                 <a href="{{ path('clamidity_profiler_profiler_index', {run:run, sort:'pmu'}) }}{{ squery }}">
                     Incl. PeakMemUse<br>
-                    (bytes)
+                    bytes
                 </a>
             </th>
             <th>
-                IPeakMemUse%
+                %
             </th>
             <th>
                 
                 <a href="{{ path('clamidity_profiler_profiler_index', {run:run, sort:'excl_pmu'}) }}{{ squery }}">
                     Excl. PeakMemUse<br>
-                    (bytes)
+                    bytes
                 </a>
             </th>
             <th>
-                EPeakMemUse%
+                %
             </th>
         </thead>
         <tbody>

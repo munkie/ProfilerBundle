@@ -2,8 +2,6 @@
 
 namespace Clamidity\ProfilerBundle\Model\Entity;
 
-use Clamidity\ProfilerBundle\Model\Entity\Report;
-
 /**
  * Description of Function
  *
