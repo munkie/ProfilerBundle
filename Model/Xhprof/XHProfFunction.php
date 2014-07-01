@@ -29,7 +29,7 @@ use Clamidity\ProfilerBundle\Model\Entity\IndFunction;
  *  @author Michael Shattuck <ms2474@gmail.com>
  */
 
-class XHProfReport extends XHProfLib
+class XHProfFunction extends XHProfLib
 {
 
     /**
